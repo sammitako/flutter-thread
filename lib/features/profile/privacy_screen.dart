@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:twitter/view_models/theme_view_model.dart';
+import 'package:twitter/view_models/theme_notifier.dart';
 
+// Provider Implementation
+/*
 class PrivacyScreen extends StatefulWidget {
   static const String routeName = "privacy";
   static const String routeURL = "privacy";
@@ -20,6 +22,37 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeViewModel = context.watch<ThemeViewModel>();
+    
+    SwitchListTile.adaptive(
+      value: themeViewModel.isDarkMode,
+      onChanged: (value) => themeViewModel.toggleTheme(),
+      secondary: Icon(
+        themeViewModel.isDarkMode ? FontAwesomeIcons.moon : FontAwesomeIcons.sun,
+        color: isDark ? Colors.white : Colors.black,
+      ),
+    ),
+  }
+}
+*/
+
+// Riverpod Implementation
+class PrivacyScreen extends ConsumerStatefulWidget {
+  static const String routeName = "privacy";
+  static const String routeURL = "privacy";
+
+  const PrivacyScreen({super.key});
+
+  @override
+  ConsumerState<PrivacyScreen> createState() => _PrivacyScreenState();
+}
+
+class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
+  bool _isPrivate = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = ref.watch(themeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -72,12 +105,11 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       body: ListView(
         children: [
           SwitchListTile.adaptive(
-            value: themeViewModel.isDarkMode,
-            onChanged: (value) => themeViewModel.toggleTheme(),
+            value: isDarkMode,
+            onChanged: (value) =>
+                ref.read(themeProvider.notifier).toggleTheme(),
             secondary: Icon(
-              themeViewModel.isDarkMode
-                  ? FontAwesomeIcons.moon
-                  : FontAwesomeIcons.sun,
+              isDarkMode ? FontAwesomeIcons.moon : FontAwesomeIcons.sun,
               color: isDark ? Colors.white : Colors.black,
             ),
             title: Text(

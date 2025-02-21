@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:twitter/router.dart';
-import 'package:twitter/view_models/theme_view_model.dart';
+import 'package:twitter/view_models/theme_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
+
+  // Provider Implementation
+  /*
   final themeViewModel = ThemeViewModel();
   await themeViewModel.initializeTheme();
   runApp(
@@ -15,15 +18,38 @@ void main() async {
       child: const MyApp(),
     ),
   );
+  */
+
+  // Riverpod Implementation
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
+// Provider Implementation
+/*
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeViewModel>().isDarkMode;
+    return MaterialApp.router(
+    
+    );
+  }
+}
+*/
+
+// Riverpod Implementation
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = ref.watch(themeProvider);
     return MaterialApp.router(
       routerConfig: router,
       title: 'Twitter',
